@@ -28,6 +28,12 @@ io.on('connection', (socket) => {
         socket.broadcast
             .to(user.room) // el to lo uso para emitir el mensaje a esa sala en específico
             .emit('message', formatMessage(botName,`${ user.username } has joined the chat`)); // el broadcast significa que lo va a emitir a todos los clientes MENOS al que "realice" la acción
+        
+        // send users and room info
+        io.to(user.room).emit('roomusers', {
+            room: user.room,
+            users: getRoomUsers(user.room)
+        })
     });
 
     // listen for chat chatMessage
@@ -42,6 +48,12 @@ io.on('connection', (socket) => {
 
         if(user) {
             io.to(user.room).emit('message', formatMessage(botName,`${user.username} has left the chat`));
+            
+            // reload users
+            io.to(user.room).emit('roomusers', {
+                room: user.room,
+                users: getRoomUsers(user.room)
+            })
         }
     });
 });
