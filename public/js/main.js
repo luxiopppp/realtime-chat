@@ -1,7 +1,15 @@
 const chatForm = document.getElementById('chat-form');
 const chatMessages = document.querySelector('.chat-messages');
 
+// get username and room from URL query
+const { username, room } = Qs.parse(location.search, {
+    ignoreQueryPrefix: true
+})
+
 const socket = io(); // esto funciona por el tag en chat.html
+
+// join chatroom
+socket.emit('joinRoom', { username, room });
 
 // message from server
 socket.on('message', (message) => { // el arg message es el que fue emitido desde server.js
@@ -39,3 +47,4 @@ function outputMessage(message) {
     `;
     document.querySelector('.chat-messages').appendChild(div)
 }
+
