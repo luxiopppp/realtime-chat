@@ -1,7 +1,8 @@
 const chatForm = document.getElementById('chat-form');
 const chatMessages = document.querySelector('.chat-messages');
 const roomName = document.getElementById('room-name');
-const userList = document.getElementById('users');
+const userList = document.getElementById('user-list');
+const activeUser = document.getElementById('active-user');
 
 // get username and room from URL query
 const { username, room } = Qs.parse(location.search, {
@@ -48,7 +49,7 @@ function outputMessage(message) {
     const div = document.createElement('div');
     div.classList.add('message');
     div.innerHTML = `
-        <p class="meta">${message.username} <span>${message.time}</span></p>
+        <p class="meta" style="color:${message.color};">${message.username} <span>${message.time}</span></p>
         <p class="text">
             ${message.text}
         </p>
@@ -63,7 +64,17 @@ function outputRoomName(room) {
 
 // Add users to DOM
 function outputUsers(users) {
-    userList.innerHTML = `
-    ${users.map(user => `<li>${user.username}</li>`).join('')}
-    `
+    userList.innerHTML = '';
+
+    const currentUser = users.find(user => user.username === username);
+    if (currentUser) {
+        activeUser.textContent = currentUser.username;
+    }
+
+    users.filter(user => user.username !== username).forEach(user => {
+        const userItem = document.createElement('li');
+        userItem.classList.add('user-item');
+        userItem.textContent = user.username;
+        userList.appendChild(userItem);
+    });
 }

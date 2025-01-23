@@ -1,8 +1,8 @@
 const users = []; // esto se puede pasar a una base de datos
 
 // join user to chat
-function userJoin(id, username, room) {
-    const user = { id, username, room };
+function userJoin(id, username, room, color) {
+    const user = { id, username, room, color };
 
     users.push(user);
 
