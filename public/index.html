@@ -19,7 +19,7 @@
 				<h1><i class="fas fa-bath"></i> Realtime Chat</h1>
 			</header>
 			<main class="join-main">
-				<form action="chat.html">
+				<form action="chat" id="main-form">
 					<div class="form-control">
 						<label for="username">Username</label>
 						<input
@@ -37,12 +37,16 @@
 							name="room" 
 							id="room"
 							placeholder="Enter room code..."
-							required
 						/>
 					</div>
-					<button type="submit" class="btn">Join Chat</button>
+					<div class="button-container">
+						<button type="submit" class="btn" id="submit-btn" disabled>Join Room</button>
+						<button type="button" class="btn" id="create-room-btn">Create Room</button>
+					</div>
 				</form>
 			</main>
 		</div>
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="js/index.js"></script>
 	</body>
 </html>

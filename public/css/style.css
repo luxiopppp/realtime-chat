@@ -32,11 +32,18 @@ a {
 
 .btn {
 	cursor: pointer;
-	padding: 5px 15px;
+	padding: 10px 15px;
 	background: var(--light-color);
 	color: var(--dark-color-a);
 	border: 0;
 	font-size: 17px;
+	font-weight: bold;
+}
+
+.btn:disabled {
+	cursor: default;
+	background: #dddbd3aa;
+	color: #4c818baa;
 }
 
 /* Chat Page */
@@ -172,7 +179,7 @@ a {
 }
 
 .join-main .form-control {
-	margin-bottom: 20px;
+	margin-bottom: 10px;
 }
 
 .join-main label {

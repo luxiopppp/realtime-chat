@@ -10,27 +10,42 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
-// static folder
-app.use(express.static(path.join(__dirname, 'public')));
-
 const botName = 'BOT'
 const botColor = generateColor(botName);
 
+// static folder
+app.use(express.static(path.join(__dirname, 'public')));
+
+// redirecciones
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, './public/index.html'));
+})
+
+app.get("/chat", (req, res) => {
+    const { username, room } = req.query;
+    res.sendFile(path.join(__dirname, './public/chat.html'));
+})
+
 // run when client connects
 io.on('connection', (socket) => {
+    socket.on('console', (msg) => {
+        console.log(msg);
+    })
+
     // join chatroom
     socket.on('joinRoom', ({ username, room }) => {
+        // console.log("a");
+        
         const user = userJoin(socket.id, username, room, generateColor(username))
-        // console.log(user);
 
         socket.join(user.room);
 
         // new client
-        socket.emit('message', formatMessage(botName,'Welcome to Realtime Chat!', botColor)); // esto emite un evento con nombre "message" y un arg // esto va para un solo cliente
+        socket.emit('message', formatMessage(botName,'Welcome to Realtime Chat!', botColor)); // esto emite un evento con nombre "message" y un arg // esto va para un solo cliente 
 
         socket.broadcast
             .to(user.room) // el to lo uso para emitir el mensaje a esa sala en específico
-            .emit('message', formatMessage(botName,`${ user.username } has joined the chat`, botColor)); // el broadcast significa que lo va a emitir a todos los clientes MENOS al que "realice" la acción
+            .emit('message', formatMessage(botName,`${ user.username } has joined the chat`, botColor)); // el broadcast significa qu e lo va a emitir a todos los clientes MENOS al que "realice" la acción
         
         // send users and room info
         io.to(user.room).emit('roomusers', {

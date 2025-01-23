@@ -3,6 +3,8 @@ const chatMessages = document.querySelector('.chat-messages');
 const roomName = document.getElementById('room-name');
 const userList = document.getElementById('user-list');
 const activeUser = document.getElementById('active-user');
+const submitBtn = document.getElementById('submit-btn');
+const inputMsg = document.getElementById('msg')
 
 // get username and room from URL query
 const { username, room } = Qs.parse(location.search, {
@@ -22,7 +24,7 @@ socket.on('roomusers', ({ room, users }) => {
 
 // message from server
 socket.on('message', (message) => { // el arg message es el que fue emitido desde server.js
-    console.log(message);
+    // console.log(message);
     outputMessage(message);
 
     // scroll down
@@ -42,6 +44,12 @@ chatForm.addEventListener('submit', (e) => { //
     // clear form
     e.target.elements.msg.value = '';
     e.target.elements.msg.focus();
+
+    submitBtn.disabled = true;
+})
+
+inputMsg.addEventListener('input', () => {
+    submitBtn.disabled = inputMsg.value.trim() === '';
 })
 
 // output message to DOM
