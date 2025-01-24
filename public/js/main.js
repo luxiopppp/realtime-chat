@@ -4,16 +4,37 @@ const roomName = document.getElementById('room-name');
 const userList = document.getElementById('user-list');
 const activeUser = document.getElementById('active-user');
 const submitBtn = document.getElementById('submit-btn');
-const inputMsg = document.getElementById('msg')
+const leaveBtn = document.getElementById('leave-btn')
+const inputMsg = document.getElementById('msg');
 
 const socket = io(); // esto funciona por el tag en chat.html
 
 const urlParams = new URLSearchParams(window.location.search);
 const username = urlParams.get('username')
-const room = urlParams.get('room');
-
+let room = sessionStorage.getItem('room') || urlParams.get('room');
+if (room) {
+    sessionStorage.setItem('room', room);
+}
 // join chatroom
-socket.emit('joinRoom', { username, room });
+// socket.emit('joinRoom', { username, room });
+window.addEventListener('load', () => {
+    // socket.emit('console', `load: ${sessionStorage.getItem('room')}`)
+    if (room) {
+        sessionStorage.setItem('room', room);
+        socket.emit('joinRoom', { username, room })
+    } else {
+        console.log("No room found. User must create or join manually");
+    }
+})
+
+window.addEventListener('beforeunload', () => {
+    // socket.emit('console', `beforeunload: ${sessionStorage.getItem('room')}`)
+})
+
+socket.on('forceLeave', () => {
+    sessionStorage.removeItem('room');
+    window.location.href = '/';
+})
 
 // get room and users
 socket.on('roomusers', ({ room, users }) => {
@@ -49,6 +70,10 @@ chatForm.addEventListener('submit', (e) => { //
 
 inputMsg.addEventListener('input', () => {
     submitBtn.disabled = inputMsg.value.trim() === '';
+})
+
+leaveBtn.addEventListener('click', () => {
+    socket.emit('leaveRoom');
 })
 
 // output message to DOM

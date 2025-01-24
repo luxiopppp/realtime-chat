@@ -1,7 +1,7 @@
 const rooms = new Set()
 
-function createRoom(code) {
-    const roomcode = code ? code : Math.random().toString(36).substring(2,6).toUpperCase();
+function createRoom() {
+    const roomcode = Math.random().toString(36).substring(2,6).toUpperCase();
     rooms.add(roomcode);
     return roomcode
 }

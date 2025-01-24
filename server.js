@@ -23,12 +23,10 @@ app.get("/", (req, res) => {
 })
 
 app.get('/create-room/:username', (req, res) => {
-    const roomcode = req.query.room;
     const username = req.params.username;
+    const roomcode = createRoom();
     
-    const response = !roomExists(roomcode)
-        ? createRoom(roomcode) && { success: true, roomcode, username }
-        : { success: false, error: 'Room already exists'};
+    const response = { success: true, roomcode, username }
 
     res.json(response)
 })
@@ -54,9 +52,8 @@ io.on('connection', (socket) => {
 
     // join chatroom
     socket.on('joinRoom', ({ username, room }) => {
-        // console.log("a");
-        
         const user = userJoin(socket.id, username, room, generateColor(username))
+        // console.log(room, user);
 
         socket.join(user.room);
 
@@ -80,22 +77,37 @@ io.on('connection', (socket) => {
         io.to(user.room).emit('message', formatMessage(user.username, msg, user.color));
     });
 
-    // when client disconnect
-    socket.on('disconnect', () => {
+    // when client leaves the room
+    socket.on('leaveRoom', () => {
         const user = userLeave(socket.id);
-
-        if(user && getRoomUsers(user.room).length > 0) {
-            console.log("a")
-            io.to(user.room).emit('message', formatMessage(botName,`${user.username} has left the chat`, botColor));
-            
-            // reload users
-            io.to(user.room).emit('roomusers', {
-                room: user.room,
-                users: getRoomUsers(user.room)
-            })
-        } else if (user) {
-            removeRoom(user.room);
+        // console.log(`Room ${user.room}`)
+        
+        // manage the room - delete if no other users
+        if (user) {
+            if (getRoomUsers(user.room).length > 0) {
+                // inform the chat
+                io.to(user.room).emit('message', formatMessage(botName,`${user.username} has left the chat`, botColor));
+                
+                // reload users
+                io.to(user.room).emit('roomusers', {
+                    room: user.room,
+                    users: getRoomUsers(user.room)
+                })
+            } else {
+                setTimeout(() => {
+                    if (!io.sockets.adapter.rooms.has(user.room)) {
+                        removeRoom(user.room);
+                        console.log(`Room ${user.room} successfully removed`)
+                    }
+                }, 100);
+            }
         }
+
+        socket.emit('forceLeave');
+    })
+
+    socket.on('disconnect', () => {
+        // console.log(sessionStorage.getItem('room'))
     });
 });
 

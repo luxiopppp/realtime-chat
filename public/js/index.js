@@ -34,7 +34,7 @@ mainForm.addEventListener('submit', async (e) => {
 
 createRoomBtn.addEventListener('click', async () => {
     try {
-        const res = await fetch(`/create-room/${usernameForm.value}?room=${roomForm.value}`);
+        const res = await fetch(`/create-room/${usernameForm.value}`);
         const data = await res.json();
         // socket.emit('console', data)
         if (data.success) {
