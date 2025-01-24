@@ -5,6 +5,7 @@ const socketio = require('socket.io');
 const formatMessage = require('./utils/messages');
 const { userJoin, getCurrentUser, userLeave, getRoomUsers } = require('./utils/users');
 const { generateColor } = require('./utils/colors');
+const { createRoom, roomExists } = require('./utils/rooms');
 
 const app = express();
 const server = http.createServer(app);
@@ -21,8 +22,22 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, './public/index.html'));
 })
 
-app.get("/chat", (req, res) => {
-    const { username, room } = req.query;
+app.get('/create-room/:username', (req, res) => {
+    const roomcode = createRoom();
+    const username = req.params.username;
+    res.json({ success: true, roomcode, username })
+})
+
+app.get('/join-room/:roomcode', (req, res) => {
+    const roomcode = req.params.roomcode;
+    const response = roomExists(roomcode)
+        ? { success: true, roomcode }
+        : { success: false, error: 'Invalid room code or the room does not exist' };
+
+    res.json(response);
+})
+
+app.get("/room", (req, res) => {
     res.sendFile(path.join(__dirname, './public/chat.html'));
 })
 

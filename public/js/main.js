@@ -7,11 +7,15 @@ const submitBtn = document.getElementById('submit-btn');
 const inputMsg = document.getElementById('msg')
 
 // get username and room from URL query
-const { username, room } = Qs.parse(location.search, {
-    ignoreQueryPrefix: true
-})
+// const { username, rooma } = Qs.parse(location.search, {
+//     ignoreQueryPrefix: true
+// })
 
 const socket = io(); // esto funciona por el tag en chat.html
+
+const urlParams = new URLSearchParams(window.location.search);
+const username = urlParams.get('username')
+const room = urlParams.get('room');
 
 // join chatroom
 socket.emit('joinRoom', { username, room });
