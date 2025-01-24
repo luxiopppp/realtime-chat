@@ -34,11 +34,13 @@ mainForm.addEventListener('submit', async (e) => {
 
 createRoomBtn.addEventListener('click', async () => {
     try {
-        const res = await fetch(`/create-room/${usernameForm.value}`);
+        const res = await fetch(`/create-room/${usernameForm.value}?room=${roomForm.value}`);
         const data = await res.json();
         // socket.emit('console', data)
         if (data.success) {
             window.location.href = `/room?username=${data.username}&room=${data.roomcode}`
+        } else {
+            console.error('Error joining room:', data.error);
         }
     } catch (err) {
         console.error('Error creating room:', err);

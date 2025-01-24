@@ -5,7 +5,7 @@ const socketio = require('socket.io');
 const formatMessage = require('./utils/messages');
 const { userJoin, getCurrentUser, userLeave, getRoomUsers } = require('./utils/users');
 const { generateColor } = require('./utils/colors');
-const { createRoom, roomExists } = require('./utils/rooms');
+const { createRoom, roomExists, roomsOnUse } = require('./utils/rooms');
 
 const app = express();
 const server = http.createServer(app);
@@ -23,9 +23,14 @@ app.get("/", (req, res) => {
 })
 
 app.get('/create-room/:username', (req, res) => {
-    const roomcode = createRoom();
+    const roomcode = req.query.room;
     const username = req.params.username;
-    res.json({ success: true, roomcode, username })
+    
+    const response = !roomExists(roomcode)
+        ? createRoom(roomcode) && { success: true, roomcode, username }
+        : { success: false, error: 'Room already exists'};
+
+    res.json(response)
 })
 
 app.get('/join-room/:roomcode', (req, res) => {
