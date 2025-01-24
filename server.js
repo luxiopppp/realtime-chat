@@ -5,7 +5,7 @@ const socketio = require('socket.io');
 const formatMessage = require('./utils/messages');
 const { userJoin, getCurrentUser, userLeave, getRoomUsers } = require('./utils/users');
 const { generateColor } = require('./utils/colors');
-const { createRoom, roomExists, roomsOnUse } = require('./utils/rooms');
+const { createRoom, roomExists, roomsOnUse, removeRoom } = require('./utils/rooms');
 
 const app = express();
 const server = http.createServer(app);
@@ -84,7 +84,8 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         const user = userLeave(socket.id);
 
-        if(user) {
+        if(user && getRoomUsers(user.room).length > 0) {
+            console.log("a")
             io.to(user.room).emit('message', formatMessage(botName,`${user.username} has left the chat`, botColor));
             
             // reload users
@@ -92,6 +93,8 @@ io.on('connection', (socket) => {
                 room: user.room,
                 users: getRoomUsers(user.room)
             })
+        } else if (user) {
+            removeRoom(user.room);
         }
     });
 });

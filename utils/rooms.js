@@ -6,6 +6,10 @@ function createRoom(code) {
     return roomcode
 }
 
+function removeRoom(code) {
+    return rooms.delete(code);
+}
+
 function roomExists(code) {
     return rooms.has(code);
 }
@@ -16,6 +20,7 @@ function roomsOnUse() {
 
 module.exports = {
     createRoom,
+    removeRoom,
     roomExists,
     roomsOnUse
 }
