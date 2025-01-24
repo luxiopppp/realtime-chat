@@ -107,7 +107,18 @@ io.on('connection', (socket) => {
     })
 
     socket.on('disconnect', () => {
-        // console.log(sessionStorage.getItem('room'))
+        const user = userLeave(socket.id);
+        
+        if (user) {
+            // inform the chat
+            io.to(user.room).emit('message', formatMessage(botName,`${user.username} has left the chat`, botColor));
+                
+            // reload users
+            io.to(user.room).emit('roomusers', {
+                room: user.room,
+                users: getRoomUsers(user.room)
+            })
+        }
     });
 });
 
