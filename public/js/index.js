@@ -13,37 +13,61 @@ roomForm.addEventListener('input', () => {
 
 mainForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
-    const roomcode = roomForm.value;
-    try {
-        const res = await fetch(`/join-room/${roomcode}`)
-        const data = await res.json();
-        data['username'] = usernameForm.value;
 
-        if (data.success) {
-            window.location.href = `/room?username=${data.username}&room=${data.roomcode}`;
+    const data = {
+        roomcode: roomForm.value,
+        username: usernameForm.value
+    };
+
+    try {
+        const res = await fetch('/join-room', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data),
+        });
+
+        const resData = await res.json();
+        // socket.emit('console', resData)
+
+        if (resData.success) {
+            sessionStorage.setItem('username', resData.username);
+            window.location.href = `/room/${resData.roomcode}`;
         } else {
-            console.error('Error joining room:', data.error);
+            console.error('Error joining room:', resData.error);
         }
 
-    } catch (err) {
-        console.error('Error joining room:', err);
+    } catch (error) {
+        console.error('Error joining room:', error);
     }
-    
 })
 
 createRoomBtn.addEventListener('click', async () => {
+    const data = {
+        username: usernameForm.value
+    };
+
     try {
-        const res = await fetch(`/create-room/${usernameForm.value}`);
-        const data = await res.json();
-        // socket.emit('console', data)
-        if (data.success) {
-            window.location.href = `/room?username=${data.username}&room=${data.roomcode}`
+        const res = await fetch('/create-room', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data),
+        });
+
+        const resData = await res.json();
+        // socket.emit('console', resData)
+        
+        if (resData.success) {
+            sessionStorage.setItem('username', resData.username);
+            window.location.href = `/room/${resData.roomcode}`;
         } else {
-            console.error('Error joining room:', data.error);
+            console.error('Error joining room:', resData.error);
         }
-    } catch (err) {
-        console.error('Error creating room:', err);
+
+    } catch (error) {
+        console.error('Error creating room:', error);
     }
 })
-

@@ -9,26 +9,24 @@ const inputMsg = document.getElementById('msg');
 
 const socket = io(); // esto funciona por el tag en chat.html
 
-const urlParams = new URLSearchParams(window.location.search);
-const username = urlParams.get('username')
-let room = sessionStorage.getItem('room') || urlParams.get('room');
-if (room) {
-    sessionStorage.setItem('room', room);
-}
+// const urlParams = new URLSearchParams(window.location.search);
+const username = sessionStorage.getItem('username')
+const room = window.location.pathname.split('/').pop();
+
 // join chatroom
-// socket.emit('joinRoom', { username, room });
 window.addEventListener('load', () => {
-    // socket.emit('console', `load: ${sessionStorage.getItem('room')}`)
+    // socket.emit('console', `${username} on room: ${room}`)
+    // socket.emit('console', sessionStorage)
+    if (sessionStorage.getItem('timeout')) clearTimeout(sessionStorage.getItem('timeout'))
+    sessionStorage.setItem('timeout', null);
+
     if (room) {
         sessionStorage.setItem('room', room);
+        // socket.emit('console', sessionStorage.getItem('room'));
         socket.emit('joinRoom', { username, room })
     } else {
         console.log("No room found. User must create or join manually");
     }
-})
-
-window.addEventListener('beforeunload', () => {
-    // socket.emit('console', `beforeunload: ${sessionStorage.getItem('room')}`)
 })
 
 socket.on('forceLeave', () => {
@@ -73,7 +71,7 @@ inputMsg.addEventListener('input', () => {
 })
 
 leaveBtn.addEventListener('click', () => {
-    socket.emit('leaveRoom');
+    window.location.href = '/';
 })
 
 // output message to DOM

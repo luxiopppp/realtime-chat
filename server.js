@@ -14,16 +14,17 @@ const io = socketio(server);
 const botName = 'BOT'
 const botColor = generateColor(botName);
 
-// static folder
+// uses
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
 
 // redirecciones
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, './public/index.html'));
 })
 
-app.get('/create-room/:username', (req, res) => {
-    const username = req.params.username;
+app.post('/create-room', (req, res) => {
+    const username = req.body.username
     const roomcode = createRoom();
     
     const response = { success: true, roomcode, username }
@@ -31,21 +32,26 @@ app.get('/create-room/:username', (req, res) => {
     res.json(response)
 })
 
-app.get('/join-room/:roomcode', (req, res) => {
-    const roomcode = req.params.roomcode;
-    const response = roomExists(roomcode)
-        ? { success: true, roomcode }
-        : { success: false, error: 'Invalid room code or the room does not exist' };
+app.post('/join-room', (req, res) => {
+    const username = req.body.username;
+    const roomcode = req.body.roomcode;
 
-    res.json(response);
+    const response = { success: true, roomcode, username }
+
+    res.json(response)
 })
 
-app.get("/room", (req, res) => {
-    res.sendFile(path.join(__dirname, './public/chat.html'));
+app.get("/room/:roomcode", (req, res) => {
+    if (roomExists(req.params.roomcode)) {
+        res.sendFile(path.join(__dirname, './public/chat.html'));
+    } else {
+        res.json({ success: false, error: 'Invalid room code or the room does not exist' })
+    }
 })
 
 // run when client connects
 io.on('connection', (socket) => {
+    // debug
     socket.on('console', (msg) => {
         console.log(msg);
     })
@@ -78,9 +84,36 @@ io.on('connection', (socket) => {
     });
 
     // when client leaves the room
-    socket.on('leaveRoom', () => {
+    // socket.on('leaveRoom', () => {
+    //     const user = userLeave(socket.id);
+        
+    //     // manage the room - delete if no other users
+    //     if (user) {
+    //         if (getRoomUsers(user.room).length > 0) {
+    //             // inform the chat
+    //             io.to(user.room).emit('message', formatMessage(botName,`${user.username} has left the chat`, botColor));
+                
+    //             // reload users
+    //             io.to(user.room).emit('roomusers', {
+    //                 room: user.room,
+    //                 users: getRoomUsers(user.room)
+    //             })
+    //         } else {
+    //             setTimeout(() => {
+    //                 if (!io.sockets.adapter.rooms.has(user.room)) {
+    //                     removeRoom(user.room);
+    //                     console.log(`Room ${user.room} successfully removed`)
+    //                 }
+    //             }, 100);
+    //         }
+    //     }
+
+    //     socket.emit('forceLeave');
+    // })
+
+    // when disconnect (page session ends)
+    socket.on('disconnect', () => {
         const user = userLeave(socket.id);
-        // console.log(`Room ${user.room}`)
         
         // manage the room - delete if no other users
         if (user) {
@@ -94,31 +127,16 @@ io.on('connection', (socket) => {
                     users: getRoomUsers(user.room)
                 })
             } else {
-                setTimeout(() => {
+                const timeout = setTimeout(() => {
                     if (!io.sockets.adapter.rooms.has(user.room)) {
                         removeRoom(user.room);
                         console.log(`Room ${user.room} successfully removed`)
                     }
-                }, 100);
+                }, 500);
             }
         }
 
         socket.emit('forceLeave');
-    })
-
-    socket.on('disconnect', () => {
-        const user = userLeave(socket.id);
-        
-        if (user) {
-            // inform the chat
-            io.to(user.room).emit('message', formatMessage(botName,`${user.username} has left the chat`, botColor));
-                
-            // reload users
-            io.to(user.room).emit('roomusers', {
-                room: user.room,
-                users: getRoomUsers(user.room)
-            })
-        }
     });
 });
 
