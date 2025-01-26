@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
 
 :root {
 	--dark-color-a: #4c818b;
@@ -47,4 +46,6 @@ a {
 	color: #4c818baa;
 }
 
-
+.disable-this {
+	display: none;
+}

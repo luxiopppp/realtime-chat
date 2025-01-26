@@ -11,7 +11,7 @@ roomForm.addEventListener('input', () => {
     submitBtn.disabled = roomForm.value.length !== 4;
 })
 
-mainForm.addEventListener('submit', async (e) => {
+mainForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
     const data = {
@@ -19,28 +19,8 @@ mainForm.addEventListener('submit', async (e) => {
         username: usernameForm.value
     };
 
-    try {
-        const res = await fetch('/join-room', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data),
-        });
-
-        const resData = await res.json();
-        // socket.emit('console', resData)
-
-        if (resData.success) {
-            sessionStorage.setItem('username', resData.username);
-            window.location.href = `/room/${resData.roomcode}`;
-        } else {
-            console.error('Error joining room:', resData.error);
-        }
-
-    } catch (error) {
-        console.error('Error joining room:', error);
-    }
+    sessionStorage.setItem('username', data.username);
+    window.location.href = `/room/${data.roomcode}`;
 })
 
 createRoomBtn.addEventListener('click', async () => {

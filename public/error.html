@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
+        integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk="
+        crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/error.css" />
+    <title>Oops...</title>
+</head>
+<body>
+    <div class="error-container">
+        <header class="error-header">
+            <h1 id="error-code"></h1>
+            <h3 id="error-msg"></h3>
+        </header>
+        <main class="error-main">
+            <p id="error-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae, cum dolorum, unde vel a asperiores quisquam deserunt aspernatur amet tenetur modi! Nesciunt eius esse ipsa numquam ad animi vitae itaque!</p>
+            <h3>Redirected in <span id="countdown">3</span></h3>
+            <button type="button" class="btn" id="go-home-btn" onclick="window.location.href='/'">Go Back</button>
+        </main>
+    </div>
+    <script src="/js/error.js"></script>
+</body>
+</html>
