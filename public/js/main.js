@@ -6,6 +6,7 @@ const activeUser = document.getElementById('active-user');
 const submitBtn = document.getElementById('submit-btn');
 const leaveBtn = document.getElementById('leave-btn')
 const inputMsg = document.getElementById('msg');
+const usernameModal = document.getElementById('username-modal');
 
 const socket = io(); // esto funciona por el tag en chat.html
 
@@ -15,23 +16,20 @@ const room = window.location.pathname.split('/').pop();
 
 // join chatroom
 window.addEventListener('load', () => {
-    // socket.emit('console', `${username} on room: ${room}`)
-    // socket.emit('console', sessionStorage)
-    if (sessionStorage.getItem('timeout')) clearTimeout(sessionStorage.getItem('timeout'))
-    sessionStorage.setItem('timeout', null);
-
-    if (room) {
+    if (username) {
         sessionStorage.setItem('room', room);
-        // socket.emit('console', sessionStorage.getItem('room'));
         socket.emit('joinRoom', { username, room })
     } else {
-        console.log("No room found. User must create or join manually");
+        usernameModal.classList.remove('disable-this');
+        document.getElementById('username-form').addEventListener('submit', () => {
+            const requiredUsername = document.getElementById('username-input').value;
+            sessionStorage.setItem('username', requiredUsername)
+        })
     }
 })
 
 socket.on('forceLeave', () => {
-    sessionStorage.removeItem('room');
-    window.location.href = '/';
+    leaveRoom()
 })
 
 // get room and users
@@ -71,7 +69,7 @@ inputMsg.addEventListener('input', () => {
 })
 
 leaveBtn.addEventListener('click', () => {
-    window.location.href = '/';
+    leaveRoom();
 })
 
 // output message to DOM
@@ -107,4 +105,9 @@ function outputUsers(users) {
         userItem.textContent = user.username;
         userList.appendChild(userItem);
     });
+}
+
+function leaveRoom() {
+    window.location.href = '/';
+    sessionStorage.setItem('room', null);
 }

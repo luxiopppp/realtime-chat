@@ -47,7 +47,7 @@ a {
 }
 
 .disable-this {
-	display: none;
+	display: none !important;
 }
 
 .required {

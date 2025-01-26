@@ -1,0 +1,39 @@
+.modal {
+    display: flex;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 0;
+}
+
+.modal-elements {
+    background: var(--dark-color-b);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 40px;
+}
+
+.modal-elements h2 {
+    font-size: 50px;
+    padding: 20px;
+}
+
+.username-form {
+    margin: 10px;
+    width: 100%; height: 100%;
+    display: grid;
+	grid-template-columns: 2fr .5fr;
+    gap: 5px;
+}
+
+.username-form input {
+    padding: 5px;
+    
+}
