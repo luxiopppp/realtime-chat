@@ -24,30 +24,38 @@ mainForm.addEventListener('submit', (e) => {
 })
 
 createRoomBtn.addEventListener('click', async () => {
-    const data = {
-        username: usernameForm.value
-    };
-
-    try {
-        const res = await fetch('/create-room', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data),
-        });
-
-        const resData = await res.json();
-        // socket.emit('console', resData)
-        
-        if (resData.success) {
-            sessionStorage.setItem('username', resData.username);
-            window.location.href = `/room/${resData.roomcode}`;
-        } else {
-            console.error('Error joining room:', resData.error);
+    if (usernameForm.value) {
+        const data = {
+            username: usernameForm.value
+        };
+    
+        try {
+            const res = await fetch('/create-room', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data),
+            });
+    
+            const resData = await res.json();
+            // socket.emit('console', resData)
+            
+            if (resData.success) {
+                sessionStorage.setItem('username', resData.username);
+                window.location.href = `/room/${resData.roomcode}`;
+            } else {
+                console.error('Error joining room:', resData.error);
+            }
+    
+        } catch (error) {
+            console.error('Error creating room:', error);
         }
+    } else {
+        usernameForm.classList.add('required')
 
-    } catch (error) {
-        console.error('Error creating room:', error);
+        setTimeout(() => {
+            usernameForm.classList.remove('required')
+        }, 500)
     }
 })

@@ -48,7 +48,6 @@ body {
 
 .error-main p {
     /* background-color: aquamarine; */
-    display: none;
     padding: 0 20px;
     padding-bottom: 40px;
 }
