@@ -30,7 +30,7 @@ createRoomBtn.addEventListener('click', async () => {
         };
     
         try {
-            const res = await fetch('/create-room', {
+            const res = await fetch('/create-room-async', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -39,9 +39,9 @@ createRoomBtn.addEventListener('click', async () => {
             });
     
             const resData = await res.json();
-            // socket.emit('console', resData)
             
             if (resData.success) {
+                // socket.emit('console', resData.roomcode)
                 sessionStorage.setItem('username', resData.username);
                 window.location.href = `/room/${resData.roomcode}`;
             } else {

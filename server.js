@@ -2,10 +2,21 @@ const path = require('path');
 const http = require('http')
 const express = require('express');
 const socketio = require('socket.io');
+require('dotenv').config()
+
+// utils
 const formatMessage = require('./utils/messages');
-const { userJoin, getCurrentUser, userLeave, getRoomUsers } = require('./utils/users');
 const { generateColor } = require('./utils/colors');
-const { createRoom, roomExists, roomsOnUse, removeRoom } = require('./utils/rooms');
+const {  createRoomAsync, roomExistsAsync, findRoomByCode, findRoomByUser, getUsersCount, removeRoomAsync, userJoin, userLeave } = require('./utils/rooms');
+
+// db
+const mongoose = require('mongoose');
+const Room = require('./models/Room');
+mongoose.connect(process.env.MONGO_URI, { serverApi: { version: '1', strict: true, deprecationErrors: true } })
+const db = mongoose.connection;
+db.on('error', err =>  console.error(err));
+db.once('connected', () =>  console.log('connected to mongodb!'));
+db.on('disconnected', () =>  console.log('disconnected to mongodb!'));
 
 const app = express();
 const server = http.createServer(app);
@@ -18,22 +29,24 @@ const botColor = generateColor(botName);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
+
 // redirecciones
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, './public/index.html'));
 })
 
-app.post('/create-room', (req, res) => {
-    const username = req.body.username
-    const roomcode = createRoom();
+app.post('/create-room-async', async (req, res) => {
+    const username = req.body.username;
+    const roomcode = await createRoomAsync();
     
     const response = { success: true, roomcode, username }
-
+    
     res.json(response)
 })
 
-app.get("/room/:roomcode", (req, res, next) => {
-    if (!roomExists(req.params.roomcode)) {
+app.get("/room/:roomcode", async (req, res, next) => {
+    const roomExists = await roomExistsAsync(req.params.roomcode);
+    if (!roomExists) {
         const error = new Error('Invalid room code');
         error.status = 404;
         return next(error);
@@ -67,58 +80,67 @@ io.on('connection', (socket) => {
     })
 
     // join chatroom
-    socket.on('joinRoom', ({ username, room }) => {
-        const user = userJoin(socket.id, username, room, generateColor(username))
-        // console.log(room, user);
+    socket.on('joinRoom', async ({ username, room }) => {
+        const updatedRoom = await userJoin(socket.id, room, username, generateColor(username))
+        // console.log(updatedRoom);
 
-        socket.join(user.room);
+        socket.join(updatedRoom.roomcode);
 
         // new client
         socket.emit('message', formatMessage(botName,'Welcome to Realtime Chat!', botColor)); // esto emite un evento con nombre "message" y un arg // esto va para un solo cliente 
 
-        socket.broadcast
-            .to(user.room) // el to lo uso para emitir el mensaje a esa sala en específico
-            .emit('message', formatMessage(botName,`${ user.username } has joined the chat`, botColor)); // el broadcast significa qu e lo va a emitir a todos los clientes MENOS al que "realice" la acción
+        socket.broadcast // el broadcast significa qu e lo va a emitir a todos los clientes MENOS al que "realice" la acción (NO HACE FALTA SI ESTA EL .to())
+            .to(updatedRoom.roomcode) // el to lo uso para emitir el mensaje a esa sala en específico
+            .emit('message', formatMessage(botName,`${ username } has joined the chat`, botColor)); 
         
         // send users and room info
-        io.to(user.room).emit('roomusers', {
-            room: user.room,
-            users: getRoomUsers(user.room)
+        io.to(updatedRoom.roomcode).emit('roomusers', {
+            room: updatedRoom.roomcode,
+            users: updatedRoom.users
         })
     });
 
     // listen for chat chatMessage
-    socket.on('chatMessage', (msg) => {
-        const user = getCurrentUser(socket.id);
-        io.to(user.room).emit('message', formatMessage(user.username, msg, user.color));
+    socket.on('chatMessage', async (msg, username) => {
+        const roomData = await findRoomByUser(username);
+        // console.log(roomData);
+        const color = roomData.users.filter((user) => user.username === username)[0].color;
+        // console.log(color);
+        
+        io.to(roomData.roomcode).emit('message', formatMessage(username, msg, color));
     });
 
     // when disconnect (page session ends)
-    socket.on('disconnect', () => {
-        const user = userLeave(socket.id);
+    socket.on('disconnect', async () => {
+        const outdatedRoom = await userLeave(socket.id); // update users but return outdated
         
-        // manage the room - delete if no other users
-        if (user) {
-            if (getRoomUsers(user.room).length > 0) {
-                // inform the chat
-                io.to(user.room).emit('message', formatMessage(botName,`${user.username} has left the chat`, botColor));
-                
-                // reload users
-                io.to(user.room).emit('roomusers', {
-                    room: user.room,
-                    users: getRoomUsers(user.room)
-                })
-            } else {
-                const timeout = setTimeout(() => {
-                    if (!io.sockets.adapter.rooms.has(user.room)) {
-                        removeRoom(user.room);
-                        console.log(`Room ${user.room} successfully removed`)
-                    }
-                }, 500);
+        try {
+            if (outdatedRoom) {
+                const username = outdatedRoom.users.filter((user) => user._id === socket.id)[0].username;
+                const count = await getUsersCount(outdatedRoom.roomcode);
+                if (count > 0) {
+                    // inform the chat
+                    io.to(outdatedRoom.roomcode).emit('message', formatMessage(botName,`${username} has left the chat`, botColor));
+                    
+                    // reload users
+                    io.to(outdatedRoom.roomcode).emit('roomusers', {
+                        room: outdatedRoom.roomcode,
+                        users: outdatedRoom.users.filter((user) => user._id !== socket.id)
+                    })
+                } else {
+                    const timeout = setTimeout(() => {
+                        if (!io.sockets.adapter.rooms.has(outdatedRoom.roomcode)) {
+                            removeRoomAsync(outdatedRoom.roomcode);
+                            console.log(`Room ${outdatedRoom.roomcode} successfully removed`)
+                        }
+                    }, 500);
+                }
             }
+    
+            socket.emit('forceLeave');
+        } catch (error) {
+            console.error(error)
         }
-
-        socket.emit('forceLeave');
     });
 });
 

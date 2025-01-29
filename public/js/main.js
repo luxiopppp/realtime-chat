@@ -29,7 +29,7 @@ window.addEventListener('load', () => {
 })
 
 socket.on('forceLeave', () => {
-    leaveRoom()
+    leaveRoom();
 })
 
 // get room and users
@@ -41,6 +41,7 @@ socket.on('roomusers', ({ room, users }) => {
 // message from server
 socket.on('message', (message) => { // el arg message es el que fue emitido desde server.js
     // console.log(message);
+    // socket.emit('console', message);
     outputMessage(message);
 
     // scroll down
@@ -55,7 +56,7 @@ chatForm.addEventListener('submit', (e) => { //
     const msg = e.target.elements.msg.value;
 
     // emit message to server
-    socket.emit('chatMessage', msg);
+    socket.emit('chatMessage', msg, username);
 
     // clear form
     e.target.elements.msg.value = '';
