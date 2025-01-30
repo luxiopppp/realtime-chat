@@ -75,10 +75,17 @@ leaveBtn.addEventListener('click', () => {
 
 // output message to DOM
 function outputMessage(message) {
+    const formatDate = (time) => {
+        return new Date(time).toLocaleString(undefined, {
+            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            hour: '2-digit',
+            minute: '2-digit'
+        })
+    };
     const div = document.createElement('div');
     div.classList.add('message');
     div.innerHTML = `
-        <p class="meta" style="color:${message.color};">${message.username} <span>${message.time}</span></p>
+        <p class="meta" style="color:${message.color};">${message.username} <span>${formatDate(message.time)}</span></p>
         <p class="text">
             ${message.text}
         </p>
