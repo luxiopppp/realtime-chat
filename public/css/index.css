@@ -1,12 +1,22 @@
+body {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-template-areas: 
+		". main instructions";
+	gap: 20px;
+	justify-content: center;
+}
 
 /* Join Page */
 .join-container {
-	max-width: 500px;
-	margin: 80px auto;
+	max-width: 600px;
+	min-width: 350px;
+	margin: 80px 0;
 	color: #fff;
+	grid-area: main;
 }
 
-.join-header {
+.join-header, .instructions-header {
 	text-align: center;
 	padding: 20px;
 	background: var(--dark-color-a);
@@ -14,15 +24,11 @@
 	border-top-right-radius: 5px;
 }
 
-.join-main {
+.join-main, .instructions-main {
 	padding: 30px 40px;
 	background: var(--dark-color-b);
 	border-bottom-left-radius: 5px;
 	border-bottom-right-radius: 5px;
-}
-
-.join-main p {
-	margin-bottom: 20px;
 }
 
 .join-main .form-control {
@@ -51,4 +57,44 @@
 .join-main .btn {
 	margin-top: 20px;
 	width: 100%;
+}
+
+.instructions-container {
+	margin: 80px 0 0;
+	max-width: 500px;
+	/* background: red; */
+	grid-area: instructions;
+	color: #fff;
+}
+
+.instructions-header {
+	font-size: .8em;
+}
+
+.instructions-main .step-item {
+	margin-bottom: 20px;
+	font-weight: normal;
+	font-size: 1.2em;
+}
+
+@media (max-width: 1100px) {
+	body {
+		grid-template-columns: auto;
+	}
+
+
+}
+
+@media (max-width: 850px) {
+	body {
+		grid-template-columns: auto;
+		grid-template-areas: 
+			"main"
+			"instructions";
+		
+	}
+
+	.join-container, .instructions-container {
+		margin: 0;
+	}
 }
