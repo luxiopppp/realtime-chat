@@ -87,7 +87,7 @@ io.on('connection', (socket) => {
         socket.join(updatedRoom.roomcode);
 
         // new client
-        socket.emit('message', formatMessage(botName,'Welcome to Realtime Chat!', botColor)); // esto emite un evento con nombre "message" y un arg // esto va para un solo cliente 
+        socket.emit('message', formatMessage(botName,"Welcome! 🎉 Invite others by sharing the room code, copying the link, or clicking the copy button 📋. Enjoy the chat! 💬", botColor)); // esto emite un evento con nombre "message" y un arg // esto va para un solo cliente 
 
         socket.broadcast // el broadcast significa qu e lo va a emitir a todos los clientes MENOS al que "realice" la acción (NO HACE FALTA SI ESTA EL .to())
             .to(updatedRoom.roomcode) // el to lo uso para emitir el mensaje a esa sala en específico
