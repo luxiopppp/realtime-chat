@@ -14,6 +14,9 @@ const socket = io(); // esto funciona por el tag en chat.html
 const username = sessionStorage.getItem('username')
 const room = window.location.pathname.split('/').pop();
 
+const originalTitle = document.title;
+let notifications = 0;
+
 // join chatroom
 window.addEventListener('load', () => {
     if (username) {
@@ -28,6 +31,10 @@ window.addEventListener('load', () => {
     }
 })
 
+window.addEventListener('focus', () => {
+    titleNotification();
+})
+
 socket.on('forceLeave', () => {
     leaveRoom();
 })
@@ -40,8 +47,7 @@ socket.on('roomusers', ({ room, users }) => {
 
 // message from server
 socket.on('message', (message) => { // el arg message es el que fue emitido desde server.js
-    // console.log(message);
-    // socket.emit('console', message);
+    titleNotification();
     outputMessage(message);
 
     // scroll down
@@ -120,4 +126,14 @@ function outputUsers(users) {
 function leaveRoom() {
     window.location.href = '/';
     sessionStorage.setItem('room', null);
+}
+
+function titleNotification() {
+    if (!document.hasFocus()){
+        notifications++;
+        document.title = `(${notifications}) ${originalTitle}`;
+    } else {
+        notifications = 0;
+        document.title = originalTitle;
+    }
 }
