@@ -98,12 +98,14 @@ function outputUsers(users) {
     const currentUser = users.find(user => user.username === username);
     if (currentUser) {
         activeUser.textContent = currentUser.username;
+        activeUser.title = currentUser.username
     }
 
     users.filter(user => user.username !== username).forEach(user => {
         const userItem = document.createElement('li');
         userItem.classList.add('user-item');
         userItem.textContent = user.username;
+        userItem.title = user.username;
         userList.appendChild(userItem);
     });
 }

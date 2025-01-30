@@ -95,6 +95,12 @@
 	border-radius: 5px;
 }
 
+.user-list-container * {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 .user-item {
 	font-size: 18px;
 }
