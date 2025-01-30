@@ -29,12 +29,59 @@
 	overflow-y: scroll;
 }
 
-.chat-sidebar h2 {
-	font-size: 20px;
+.room-name-container {
+	position: relative;
+	display: grid;
+	grid-template-columns: 3fr .5fr;
 	background: rgba(0, 0, 0, 0.1);
 	padding: 10px;
 	margin-bottom: 20px;
 	border-radius: 5px;
+}
+
+.copy-btn, .check-icon {
+	position: absolute;
+	font-size: 1.4rem;
+	right: 0.5rem;
+	top: 50%;
+	translate: 0 -50%;
+	transition-behavior: discrete;
+	transition-property: opacity transform;
+	transition-duration: .3s;
+}
+
+.copy-btn {
+	text-decoration: none;
+	text-shadow: 0 4px 0 #0005;
+	border: none;
+	background-color: #0000;
+	cursor: pointer;
+	transform: translateY(-2px);
+}
+
+.check-icon {
+	-webkit-user-select: none; /* Safari */
+	-ms-user-select: none; /* IE 10 and IE 11 */
+	user-select: none; /* Standard syntax */
+	opacity: 0;
+	transform: translateY(-2px);
+}
+
+.copy-btn:active, .copy-btn.clicked {
+	opacity: 0;
+	text-shadow: none;
+	transform: translateY(0);
+}
+
+.room-name-container:has(.copy-btn:active) .check-icon,
+.room-name-container:has(.copy-btn.copy-btn.clicked) .check-icon
+{
+	transform: translateY(0);
+	opacity: 1;
+}
+
+.chat-sidebar h2 {
+	font-size: 30px;
 }
 
 .chat-sidebar h3 {

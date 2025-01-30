@@ -7,6 +7,7 @@ const submitBtn = document.getElementById('submit-btn');
 const leaveBtn = document.getElementById('leave-btn')
 const inputMsg = document.getElementById('msg');
 const usernameModal = document.getElementById('username-modal');
+const copyInvite = document.getElementById('copy-btn');
 
 const socket = io(); // esto funciona por el tag en chat.html
 
@@ -20,6 +21,7 @@ let notifications = 0;
 // join chatroom
 window.addEventListener('load', () => {
     if (username) {
+        copyInvite.classList.remove('disable-this')
         sessionStorage.setItem('room', room);
         socket.emit('joinRoom', { username, room })
     } else {
@@ -77,6 +79,19 @@ inputMsg.addEventListener('input', () => {
 
 leaveBtn.addEventListener('click', () => {
     leaveRoom();
+})
+
+copyInvite.addEventListener('click', () => {
+    const link = `${window.location.href}`;
+
+    navigator.clipboard.writeText(link)
+        .then(() => {
+            copyInvite.classList.add("clicked");
+            setTimeout(() => {
+                copyInvite.classList.remove("clicked");
+            }, 500)
+        })
+        .catch((err) => console.error(err))
 })
 
 // output message to DOM
