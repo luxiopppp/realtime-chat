@@ -95,6 +95,7 @@
 .chat-messages {
 	padding: 30px;
 	overflow-y: scroll;
+	overflow-wrap: break-word;
 	background: var(--dark-color-b);
 	max-height: 75vh;
 }
