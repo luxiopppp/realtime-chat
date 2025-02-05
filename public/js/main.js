@@ -109,6 +109,7 @@ function makeLinksClickable(text){
     if(urlRegex.test(text)){
         return <a href="${text}" target="_blank">${text}</a>
     }
+    return text;
 }
     const div = document.createElement('div');
     div.classList.add('message');
