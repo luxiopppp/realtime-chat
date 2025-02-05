@@ -12,11 +12,10 @@ body {
     width: 100%;
     flex-direction: column;
     margin: 0;
+    color: #fff;
 }
 
 .error-header {
-    /* background-color: rebeccapurple; */
-	font-family: 'JetBrains Mono', sans-serif;
     display: flex;
     align-items: center;
     justify-content: center;

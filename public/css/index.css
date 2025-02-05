@@ -19,14 +19,14 @@ body {
 .join-header, .instructions-header {
 	text-align: center;
 	padding: 20px;
-	background: var(--dark-color-a);
+	background: var(--secondary-color);
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
 }
 
 .join-main, .instructions-main {
 	padding: 30px 40px;
-	background: var(--dark-color-b);
+	background: var(--primary-color);
 	border-bottom-left-radius: 5px;
 	border-bottom-right-radius: 5px;
 }
@@ -42,9 +42,12 @@ body {
 
 .join-main input[type='text'] {
 	font-size: 16px;
-	padding: 5px;
+	padding: 10px;
 	height: 40px;
 	width: 100%;
+	border-radius: 5px;
+	background: #303436aa;
+	color: #fff;
 }
 
 .join-main select {
@@ -81,8 +84,6 @@ body {
 	body {
 		grid-template-columns: auto;
 	}
-
-
 }
 
 @media (max-width: 850px) {
