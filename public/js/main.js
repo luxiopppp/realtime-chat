@@ -105,7 +105,7 @@ function outputMessage(message) {
     };
 
 function makeLinksClickable(text){
-    let urlRegex  = /^(https?:\/\/[^\s]+)$/;
+    let urlRegex  = /((https?:\/\/|www\.)[^\s]+)/g;
     if(urlRegex.test(text)){
         return <a href="${text}" target="_blank">${text}</a>
     }
