@@ -1,22 +1,19 @@
 body {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	grid-template-areas: 
-		". main instructions";
-	gap: 20px;
+	display: flex;
 	justify-content: center;
+	align-items: center;
 }
 
-/* Join Page */
 .join-container {
-	max-width: 600px;
-	min-width: 350px;
+	width: 500px;
+	min-width: 320px;
 	margin: 80px 0;
 	color: #fff;
 	grid-area: main;
+	padding: 20px;
 }
 
-.join-header, .instructions-header {
+.join-header {
 	text-align: center;
 	padding: 20px;
 	background: var(--secondary-color);
@@ -24,8 +21,8 @@ body {
 	border-top-right-radius: 5px;
 }
 
-.join-main, .instructions-main {
-	padding: 30px 40px;
+.join-main {
+	padding: 32px 40px;
 	background: var(--primary-color);
 	border-bottom-left-radius: 5px;
 	border-bottom-right-radius: 5px;
@@ -63,39 +60,73 @@ body {
 }
 
 .instructions-container {
-	margin: 80px 0 0;
-	max-width: 500px;
-	/* background: red; */
-	grid-area: instructions;
+	background: var(--primary-color);
 	color: #fff;
+	padding: 12px 32px;
+	margin: 10px;
+	border-radius: 10px;
+	position: fixed;
+	top: 0;
+	right: 0;
+	max-width: 450px;
+	z-index: 998;
+	box-shadow: -4px 4px 10px #0000001a;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: flex-start;
 }
 
-.instructions-header {
-	font-size: .8em;
+.instructions-container h3 {
+	padding: 16px 0;
+	font-weight: bold;
 }
 
-.instructions-main .step-item {
-	margin-bottom: 20px;
-	font-weight: normal;
-	font-size: 1.2em;
+.instructions-container ol {
+	/* list-style-position: inside; */
+	padding: 8px;
 }
 
-@media (max-width: 1100px) {
-	body {
-		grid-template-columns: auto;
+.instructions-container li {
+	padding-bottom: 12px;
+}
+
+
+.instructions-show, .instructions-close {
+	position: fixed;
+	top: 0;
+	right: 0;
+	margin: 20px;
+	z-index: 999;
+	background: none;
+	border-radius: 100px;
+	text-shadow: 2px 2px 0 #000;
+	transition-property: text-shadow, opacity, rotate;
+	transition-duration: 0.15s;
+	opacity: 0;
+	rotate: 90deg;
+	pointer-events: none;
+	visibility: hidden;
+
+	> i {
+		font-size: 24px;
 	}
 }
 
-@media (max-width: 850px) {
-	body {
-		grid-template-columns: auto;
-		grid-template-areas: 
-			"main"
-			"instructions";
-		
-	}
+.instructions-show:hover, .instructions-close:hover {
+	text-shadow: 0 0 5px #fff8;
+}
 
-	.join-container, .instructions-container {
-		margin: 0;
+
+body:has(.instructions-container[style*="display: none;"]) .instructions-show,
+body:has(.instructions-container[style*="display: flex;"]) .instructions-close {
+	opacity: 1;
+	visibility: visible;
+	pointer-events: all;
+	rotate: 0deg;
+}
+
+@media (max-width: 375px) {
+	.join-main {
+		padding: 32px 20px;
 	}
 }

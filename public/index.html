@@ -50,19 +50,31 @@
 				</form>
 			</main>
 		</div>
-		<div class="instructions-container">
+		<button class="btn instructions-show" onclick="showInstructions()"><i class="fas fa-question-circle"></i></button>
+		<button class="btn instructions-close" onclick="closeInstructions()"><i class="fas fa-times-circle"></i></button>
+		<div class="instructions-container" style="display: none;">
 			<div class="instructions-header">
-				<h1><i class="fas fa-search"></i> How to chat?</h1>
+				<h3><i class="fas fa-search"></i> How to chat?</h3>
 			</div>
 			<div class="instructions-main">
 				<ol class="steps">
 					<li class="step-item">Enter a username.</li>
 					<li class="step-item">Click on "Create Room" to start a new room. 😅</li>
 					<li class="step-item">Or enter a room code and click "Join Room" to join an existing one. 🎉</li>
+					<li class="step-item">Enjoy! ✨</li>
 				</ol>
 			</div>
 		</div>
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="/js/index.js"></script>
+		<script>
+			const instructions = document.querySelector('.instructions-container');
+			function showInstructions() {
+				instructions.style.display = 'flex'
+			}
+			function closeInstructions() {
+				instructions.style.display = 'none'
+			}
+		</script>
 	</body>
 </html>
