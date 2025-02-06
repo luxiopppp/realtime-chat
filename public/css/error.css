@@ -1,18 +1,20 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
-
-body {
-    margin: 0
+.main-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100%;
 }
 
 .error-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100vh;
-    width: 100%;
     flex-direction: column;
-    margin: 0;
     color: #fff;
+    padding: 0 20px 20px;
+    background: #0003;
+    border-radius: 10px;
 }
 
 .error-header {
@@ -22,6 +24,7 @@ body {
     flex-direction: column;
     margin: 20px;
     padding-bottom: 20px;
+    color: var(--accent-color-b);
 }
 
 .error-header h1 {
@@ -47,10 +50,5 @@ body {
 
 .error-main p {
     /* background-color: aquamarine; */
-    padding: 0 20px;
-    padding-bottom: 40px;
-}
-
-.error-main h3 {
     padding-bottom: 20px;
 }
