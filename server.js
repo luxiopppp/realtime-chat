@@ -139,6 +139,8 @@ io.on('connection', (socket) => {
                 const username = outdatedRoom.users.filter((user) => user._id === socket.id)[0].username;
                 const count = await getUsersCount(outdatedRoom.roomcode);
                 if (count > 0) {
+                    socket.broadcast.to(outdatedRoom.roomcode).emit('notTyping', socket.id);
+
                     // inform the chat
                     io.to(outdatedRoom.roomcode).emit('message', formatMessage(botName,`${username} has left the chat`, botColor));
                     

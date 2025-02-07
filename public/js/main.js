@@ -7,6 +7,7 @@ const submitBtn = document.getElementById('submit-btn');
 const leaveBtn = document.querySelectorAll('#leave-btn');
 const inputMsg = document.getElementById('msg');
 const usernameModal = document.getElementById('username-modal');
+const typingContainerP = document.querySelector('.typing');
 
 const socket = io(); // esto funciona por el tag en chat.html
 
@@ -18,6 +19,7 @@ const originalTitle = document.title;
 let notifications = 0;
 
 let typingTimeout;
+let typingUsers = [];
 
 // join chatroom
 window.addEventListener('load', () => {
@@ -58,25 +60,51 @@ socket.on('message', (message) => { // el arg message es el que fue emitido desd
 })
 
 socket.on('isTyping', (userid, username, color) => {
-    const typingContainer = document.querySelector('.typing-container');
-    const typingMessage = document.getElementById(`typing-${userid}`);
-    if (!typingMessage) {
-        const div = document.createElement('div');
-        div.classList.add('typing');
-        div.id = `typing-${userid}`;
-        div.innerHTML = `
-            <p><span style="color:${color};" class="meta">${username}</span> is typing...</p>
-        `;
-        typingContainer.appendChild(div);
+    const typingElement = document.getElementById(`typing-${userid}`);
+    if (!typingElement) {
+        const span = document.createElement('span');
+        span.classList.add(`typing-${userid}`);
+        span.id = `typing-${userid}`;
+        span.style.color = color;
+        span.textContent = username;
+        if (!typingContainerP.firstChild) {
+            typingContainerP.append(span, " typing...");
+        } else {
+            updateTypingText(span)
+        }
     }
 })
 
 socket.on('notTyping', (userid) => {
-    const typingMessage = document.getElementById(`typing-${userid}`);
-    if (typingMessage) {
-        typingMessage.remove();
+    const typingElement = document.getElementById(`typing-${userid}`);
+    if (typingElement) {
+        typingElement.remove();
+
+        updateTypingText()
     }
+
 })
+
+function updateTypingText(span = null) {
+    const spans = typingContainerP.querySelectorAll("span[class^='typing-']");
+    console.log(spans.length)
+    typingContainerP.textContent = "";
+
+    if (spans.length > 0) {
+        spans.forEach((s, i) => {
+            typingContainerP.appendChild(s);
+            if (span || i < spans.length - 1) {
+                typingContainerP.append(", ");
+            }
+        })
+        if (span) {
+            typingContainerP.append(span, " typing...");
+        }
+        else {
+            typingContainerP.append(" typing...")
+        }
+    }
+}
 
 // message submit
 chatForm.addEventListener('submit', (e) => { // 
@@ -117,11 +145,6 @@ leaveBtn.forEach(l => l.addEventListener('click', () => {
     leaveRoom();
 }))
 
-function outputTyping(userid, username, color) {
-}
-
-function deleteTyping(userid) {
-}
 
 // output message to DOM
 function outputMessage(message) {
