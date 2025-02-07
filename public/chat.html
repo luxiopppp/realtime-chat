@@ -28,23 +28,31 @@
       </div>
     </div>
     <div class="chat-container">
-      <header class="chat-header">
-        <h1><i class="fas fa-comments"></i> Realtime Chat</h1>
-        <!-- <button class="btn" id="leave-btn">Leave Room</button> -->
+      <header class="chat-header" style="display: none;">
+        <button class="btn leave-btn" id="leave-btn"><i class="fas fa-sign-out-alt"></i></button>
+        <button class="btn room-btn" id="room-name" onclick="copyRoomLink()"></button>
+        <div class="button-holder">
+          <button class="btn show-users" onclick="showUsers()"><i class="fas fa-users"></i></button>
+          <button class="btn close-users" onclick="closeUsers()"><i class="fas fa-times-circle"></i></button>
+        </div>
       </header>
       <main class="chat-main">
+        <div class="users-container" style="display: flex;">
+          <div class="user-list-container">
+            <p id="active-user" class="user-item active-user"></p>
+            <ul id="user-list"></ul>
+          </div>
+        </div>
         <div class="chat-sidebar">
           <div class="sidebar-data">
             <div class="room-data">
-              <h3><i class="fas fa-hashtag"></i> Room Code</h3>
+              <h3>Room Code</h3>
               <div class="room-code-container">
-                <h2 id="room-name"></h2>
-                <p class="check-icon">✅</p>
-                <button class="copy-btn disable-this" id="copy-btn">📋</button>
+                <button class="btn room-btn" id="room-name" onclick="copyRoomLink()"></button>
               </div>
             </div>
             <div class="users-data">
-              <h3><i class="fas fa-users"></i> Users</h3>
+              <h3>Users</h3>
               <div class="user-list-container">
                 <p id="active-user" class="user-item active-user"></p>
                 <ul id="user-list"></ul>
@@ -64,7 +72,7 @@
                 required
                 autocomplete="off"
               />
-              <button class="btn" id="submit-btn" disabled><i class="fas fa-paper-plane"></i> Send</button>
+              <button class="btn" id="submit-btn" disabled><i class="fas fa-paper-plane"></i></button>
             </form>
           </div>
         </div>
@@ -75,5 +83,20 @@
     ></script> <!--query selector-->
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/main.js"></script>
+    <script>
+      const users = document.querySelector('.users-container');
+
+      function showUsers() {
+				users.style.display = 'flex'
+      }
+      function closeUsers() {
+				users.style.display = 'none'
+      }
+
+      function copyRoomLink() {
+        navigator.clipboard.writeText(window.location.href)
+      }
+
+    </script>
   </body>
 </html>

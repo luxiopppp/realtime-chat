@@ -1,13 +1,12 @@
 const chatForm = document.getElementById('chat-form');
 const chatMessages = document.querySelector('.chat-messages');
-const roomName = document.getElementById('room-name');
-const userList = document.getElementById('user-list');
-const activeUser = document.getElementById('active-user');
+const roomName = document.querySelectorAll('#room-name');
+const userList = document.querySelectorAll('#user-list');
+const activeUser = document.querySelectorAll('#active-user');
 const submitBtn = document.getElementById('submit-btn');
-const leaveBtn = document.getElementById('leave-btn')
+const leaveBtn = document.querySelectorAll('#leave-btn');
 const inputMsg = document.getElementById('msg');
 const usernameModal = document.getElementById('username-modal');
-const copyInvite = document.getElementById('copy-btn');
 
 const socket = io(); // esto funciona por el tag en chat.html
 
@@ -21,7 +20,7 @@ let notifications = 0;
 // join chatroom
 window.addEventListener('load', () => {
     if (username) {
-        copyInvite.classList.remove('disable-this')
+        // copyInvite.classList.remove('disable-this')
         sessionStorage.setItem('room', room);
         socket.emit('joinRoom', { username, room })
     } else {
@@ -77,22 +76,9 @@ inputMsg.addEventListener('input', () => {
     submitBtn.disabled = inputMsg.value.trim() === '';
 })
 
-leaveBtn.addEventListener('click', () => {
+leaveBtn.forEach(l => l.addEventListener('click', () => {
     leaveRoom();
-})
-
-copyInvite.addEventListener('click', () => {
-    const link = `${window.location.href}`;
-
-    navigator.clipboard.writeText(link)
-        .then(() => {
-            copyInvite.classList.add("clicked");
-            setTimeout(() => {
-                copyInvite.classList.remove("clicked");
-            }, 500)
-        })
-        .catch((err) => console.error(err))
-})
+}))
 
 // output message to DOM
 function outputMessage(message) {
@@ -116,25 +102,27 @@ function outputMessage(message) {
 
 // Add room name to DOM
 function outputRoomName(room) {
-    roomName.innerText = room;
+    roomName.forEach(r => r.innerHTML = `<i class="fas fa-hashtag"></i> ${room}`);
 }
 
 // Add users to DOM
 function outputUsers(users) {
-    userList.innerHTML = '';
+    userList.forEach(u => u.innerHTML = '');
 
     const currentUser = users.find(user => user.username === username);
     if (currentUser) {
-        activeUser.textContent = currentUser.username;
-        activeUser.title = currentUser.username
+        activeUser.forEach(a => a.innerHTML = `${currentUser.username} <span>(You)</span>`);
+        activeUser.forEach(a => a.title = currentUser.username);
     }
 
-    users.filter(user => user.username !== username).forEach(user => {
-        const userItem = document.createElement('li');
-        userItem.classList.add('user-item');
-        userItem.textContent = user.username;
-        userItem.title = user.username;
-        userList.appendChild(userItem);
+    userList.forEach(u => {
+        users.filter(user => user.username !== username).forEach(user => {
+            const userItem = document.createElement('li');
+            userItem.classList.add('user-item');
+            userItem.textContent = user.username;
+            userItem.title = user.username;
+            u.appendChild(userItem);
+        });
     });
 }
 
