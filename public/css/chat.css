@@ -52,6 +52,10 @@
 	background-color: var(--accent-color-b);
 }
 
+.leave-btn:hover {
+	background-color: hsl(350, 60%, 40%) !important;
+}
+
 .room-code-container {
 	margin: 4px 0 12px;
 	border-radius: 5px;
@@ -116,13 +120,7 @@
 }
 
 .chat-form-container input[type='text'] {
-	font-size: 16px;
-	padding: 10px;
-	height: 40px;
 	flex: 1;
-	border-radius: 5px;
-	background: #303436aa;
-	color: #fff;
 }
 
 .user-list-container {

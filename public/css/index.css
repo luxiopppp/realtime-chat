@@ -38,13 +38,7 @@ body {
 }
 
 .join-main input[type='text'] {
-	font-size: 16px;
-	padding: 10px;
-	height: 40px;
 	width: 100%;
-	border-radius: 5px;
-	background: #303436aa;
-	color: #fff;
 }
 
 .join-main select {
@@ -123,6 +117,7 @@ body:has(.instructions-container[style*="display: flex;"]) .instructions-close {
 	visibility: visible;
 	pointer-events: all;
 	rotate: 0deg;
+	background: none;
 }
 
 @media (max-width: 375px) {
