@@ -7,16 +7,16 @@ require('dotenv').config()
 // utils
 const formatMessage = require('./utils/messages');
 const { generateColor } = require('./utils/colors');
-const {  createRoomAsync, roomExistsAsync, findRoomByCode, findRoomByUser, getUsersCount, removeRoomAsync, userJoin, userLeave } = require('./utils/rooms');
+const {  clearRoomsOnServerStart, createRoomAsync, roomExistsAsync, findRoomByCode, findRoomByUser, getUsersCount, removeRoomAsync, userJoin, userLeave } = require('./utils/rooms');
 
 // db
 const mongoose = require('mongoose');
-const Room = require('./models/Room');
 mongoose.connect(process.env.MONGO_URI, { serverApi: { version: '1', strict: true, deprecationErrors: true } })
 const db = mongoose.connection;
 db.on('error', err =>  console.error(err));
 db.once('connected', () =>  console.log('connected to mongodb!'));
 db.on('disconnected', () =>  console.log('disconnected to mongodb!'));
+clearRoomsOnServerStart();
 
 const app = express();
 const server = http.createServer(app);
@@ -103,12 +103,32 @@ io.on('connection', (socket) => {
     // listen for chat chatMessage
     socket.on('chatMessage', async (msg, username) => {
         const roomData = await findRoomByUser(username);
-        // console.log(roomData);
-        const color = roomData.users.filter((user) => user.username === username)[0].color;
-        // console.log(color);
-        
-        io.to(roomData.roomcode).emit('message', formatMessage(username, msg, color));
+        if (roomData) {
+            const color = roomData.users.filter((user) => user.username === username)[0].color;
+            
+            io.to(roomData.roomcode).emit('message', formatMessage(username, msg, color));
+        }
     });
+
+    socket.on('typing', async (typing, username) => {
+        if (!typing) {
+            return;
+        }
+        const roomData = await findRoomByUser(username);
+        if (roomData) {
+            const userid = roomData.users.filter((user) => user.username === username)[0]._id;
+            const color = roomData.users.filter((user) => user.username === username)[0].color;
+            socket.broadcast.to(roomData.roomcode).emit('isTyping', userid, username, color);
+        }
+    })
+
+    socket.on('stopTyping', async (username) => {
+        const roomData = await findRoomByUser(username);
+        if (roomData) {
+            const userid = roomData.users.filter((user) => user.username === username)[0]._id;
+            socket.broadcast.to(roomData.roomcode).emit('notTyping', userid);
+        }
+    })
 
     // when disconnect (page session ends)
     socket.on('disconnect', async () => {

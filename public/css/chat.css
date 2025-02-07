@@ -96,7 +96,7 @@
 	flex: 1 1 auto;
 }
 
-.chat-messages .message .meta {
+.chat-messages .meta {
 	font-size: 16px;
 	font-weight: bold;
 	opacity: 0.7;
@@ -105,6 +105,18 @@
 
 .chat-messages .message .meta span {
 	color: #777;
+}
+
+.typing-container {
+	padding: 0 20px;
+	background-color: var(--primary-color);
+	color: #fff;
+}
+
+.typing {
+	> p span {
+		font-weight: bold;
+	}
 }
 
 .chat-form-container {

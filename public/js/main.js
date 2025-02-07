@@ -17,6 +17,8 @@ const room = window.location.pathname.split('/').pop();
 const originalTitle = document.title;
 let notifications = 0;
 
+let typingTimeout;
+
 // join chatroom
 window.addEventListener('load', () => {
     if (username) {
@@ -55,9 +57,32 @@ socket.on('message', (message) => { // el arg message es el que fue emitido desd
     chatMessages.scrollTop = chatMessages.scrollHeight;
 })
 
+socket.on('isTyping', (userid, username, color) => {
+    const typingContainer = document.querySelector('.typing-container');
+    const typingMessage = document.getElementById(`typing-${userid}`);
+    if (!typingMessage) {
+        const div = document.createElement('div');
+        div.classList.add('typing');
+        div.id = `typing-${userid}`;
+        div.innerHTML = `
+            <p><span style="color:${color};" class="meta">${username}</span> is typing...</p>
+        `;
+        typingContainer.appendChild(div);
+    }
+})
+
+socket.on('notTyping', (userid) => {
+    const typingMessage = document.getElementById(`typing-${userid}`);
+    if (typingMessage) {
+        typingMessage.remove();
+    }
+})
+
 // message submit
 chatForm.addEventListener('submit', (e) => { // 
-    e.preventDefault(); // sin esto el formulario es enviado a un archivo
+    e.preventDefault(); // if the event is not explicitly handled, do not use the default action
+    
+    socket.emit('stopTyping', username);
 
     // get message
     const msg = e.target.elements.msg.value;
@@ -74,11 +99,29 @@ chatForm.addEventListener('submit', (e) => { //
 
 inputMsg.addEventListener('input', () => {
     submitBtn.disabled = inputMsg.value.trim() === '';
+    socket.emit('typing', inputMsg.value.trim() !== '', username);
+
+    clearTimeout(typingTimeout);
+    
+    if (inputMsg.value.trim() === '') {
+        socket.emit('stopTyping', username);
+    }
+    else {
+        typingTimeout = setTimeout(() => {
+            socket.emit('stopTyping', username);
+        }, 10000);
+    }
 })
 
 leaveBtn.forEach(l => l.addEventListener('click', () => {
     leaveRoom();
 }))
+
+function outputTyping(userid, username, color) {
+}
+
+function deleteTyping(userid) {
+}
 
 // output message to DOM
 function outputMessage(message) {

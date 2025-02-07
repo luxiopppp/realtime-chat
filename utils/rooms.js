@@ -1,5 +1,14 @@
 const Room = require('../models/Room');
 
+async function clearRoomsOnServerStart() {
+    try {
+        await Room.deleteMany({});
+        console.log('Rooms clear successfully')
+    } catch (error) {
+        console.error('Error clearing rooms:', error)
+    }
+}
+
 async function createRoomAsync() {
     const newRoom = new Room({
         roomcode: Math.random().toString(36).substring(2,6).toUpperCase(),
@@ -56,6 +65,7 @@ async function userLeave(id) {
 }
 
 module.exports = {
+    clearRoomsOnServerStart,
     createRoomAsync,
     roomExistsAsync,
     removeRoomAsync,
