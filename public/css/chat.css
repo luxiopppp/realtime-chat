@@ -196,7 +196,7 @@
 	min-height: 20px;
 	padding: 0 20px;
 	background-color: var(--primary-color);
-	color: #fff;
+	color: #fff5;
 }
 
 .typing {
@@ -207,6 +207,7 @@
 
 .chat-form-container {
 	padding: 20px;
+	padding-top: 8px;
 	background-color: var(--primary-color);
 	border-bottom-right-radius: 5px;
 	border-bottom-left-radius: 5px;
