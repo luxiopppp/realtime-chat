@@ -59,6 +59,7 @@ socket.on('message', (message) => { // el arg message es el que fue emitido desd
     chatMessages.scrollTop = chatMessages.scrollHeight;
 })
 
+// users typing
 socket.on('isTyping', (userid, username, color) => {
     const typingElement = document.getElementById(`typing-${userid}`);
     if (!typingElement) {
@@ -75,6 +76,7 @@ socket.on('isTyping', (userid, username, color) => {
     }
 })
 
+// users stop typing
 socket.on('notTyping', (userid) => {
     const typingElement = document.getElementById(`typing-${userid}`);
     if (typingElement) {
@@ -84,27 +86,6 @@ socket.on('notTyping', (userid) => {
     }
 
 })
-
-function updateTypingText(span = null) {
-    const spans = typingContainerP.querySelectorAll("span[class^='typing-']");
-    console.log(spans.length)
-    typingContainerP.textContent = "";
-
-    if (spans.length > 0) {
-        spans.forEach((s, i) => {
-            typingContainerP.appendChild(s);
-            if (span || i < spans.length - 1) {
-                typingContainerP.append(", ");
-            }
-        })
-        if (span) {
-            typingContainerP.append(span, " typing...");
-        }
-        else {
-            typingContainerP.append(" typing...")
-        }
-    }
-}
 
 // message submit
 chatForm.addEventListener('submit', (e) => { // 
@@ -145,6 +126,26 @@ leaveBtn.forEach(l => l.addEventListener('click', () => {
     leaveRoom();
 }))
 
+function updateTypingText(span = null) {
+    const spans = typingContainerP.querySelectorAll("span[class^='typing-']");
+    console.log(spans.length)
+    typingContainerP.textContent = "";
+
+    if (spans.length > 0) {
+        spans.forEach((s, i) => {
+            typingContainerP.appendChild(s);
+            if (span || i < spans.length - 1) {
+                typingContainerP.append(", ");
+            }
+        })
+        if (span) {
+            typingContainerP.append(span, " typing...");
+        }
+        else {
+            typingContainerP.append(" typing...")
+        }
+    }
+}
 
 // output message to DOM
 function outputMessage(message) {
