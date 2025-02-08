@@ -13,6 +13,8 @@
 	--tertiary-color: #242729;
 	--light-color: #D9D9D9;
 	--accent-color-a: #0F3F57;
+	--accent-color-a-disabled: hsla(200, 30%, 20%, 0.667);
+	--accent-color-a-hover: hsl(200, 40%, 30%);
 	--accent-color-b: hsl(350, 70%, 30%);
 	--focus-accent: hsl(200, 71%, 70%);
 
@@ -53,12 +55,12 @@ a {
 
 .btn:disabled {
 	cursor: default;
-	background: hsla(200, 30%, 20%, 0.667);
+	background: var(--accent-color-a-hover);
 	color: #fff8;
 }
 
 .btn:hover:not(:disabled) {
-	background: hsl(200, 40%, 30%);
+	background: var(--accent-color-a-hover);
 	color: #ffff;
 }
 
