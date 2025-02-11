@@ -103,20 +103,23 @@ function outputMessage(message) {
             minute: '2-digit'
         })
     };
-
-function makeLinksClickable(text){
-    let urlRegex  = /((https?:\/\/|www\.)[^\s]+)/g;
-    if(urlRegex.test(text)){
-        return <a href="${text}" target="_blank">${text}</a>
+    function makeLinksClickable(text) {
+        if (!text) return "";
+    
+        return text.replace(/((?:https?:\/\/|www\.)[^\s]+)/gi, (match) => {
+            let url = match.startsWith("http") ? match : `https://${match}`;
+            return `<a href="${url}" target="_blank">${match}</a>`;
+        });
     }
-    return text;
-}
+    
+    
     const div = document.createElement('div');
     div.classList.add('message');
     div.innerHTML = `
-        <p class="meta" style="color:${message.color};">${message.username} <span>${formatDate(message.time)}</span></p>
+        <p class="meta" style="color:${message?.color};">${message?.username} <span>${formatDate(message.time)}</span></p>
         <p class="text">
-            ${makeLinksClickable(message.text)}
+            
+           ${makeLinksClickable(message.text)}
         </p>
     `;
     document.querySelector('.chat-messages').appendChild(div)
